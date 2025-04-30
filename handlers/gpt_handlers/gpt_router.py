@@ -10,12 +10,17 @@ from utility.get_size import get_readable_size
 from utility.gpt_requests import solo_request
 from states.states import WaitingStateChatGpt
 from menu.keyboards import ChatGptKeyboard, MainMenuKeyboard
-from handlers.gpt_handlers.gpt_text import go_gpt_text_request
+from handlers.gpt_handlers.gpt_text import go_gpt_text_request, process_file_gpt_request
 import config_reader
+from utility.gpt_requests import chunks_request
 
 gpt_router = Router()
 
 
+
+
+
+@gpt_router.message(F.text == '🤖 Панель')
 @gpt_router.message(F.text == '🤖 ChatGpt')
 async def create_gpt_request_for_request(message: Message, state: FSMContext):
     f_text = "🤖 ChatGpt"
@@ -56,14 +61,12 @@ async def create_gpt_request_for_request(message: Message, state: FSMContext):
 
 @gpt_router.message(WaitingStateChatGpt.wait_message_from_user)
 async def detect_message_from_user(message: Message, state: FSMContext):
-    #this detect what send user text or file
-    if message.text.startswith("/"):
-        return
     user_id = message.from_user.id
     user_name = message.from_user.username or message.from_user.full_name
 
     if message.text:
-
+        if message.text.startswith("/"):
+            return
         logger.info(f'Пользователь {message.from_user.id} отправил сообщение для chatgpt')
         await bot.send_chat_action(user_id, 'typing')
         user_text_request = message.text
@@ -78,13 +81,19 @@ async def detect_message_from_user(message: Message, state: FSMContext):
             'text/plain'
         ]
         if mime_type in allowed_mime_types:
-            file_name = message.document.file_name
-            main_file_name = ['user_files/', file_name]
-            logger.info(f'Пользователь {user_name} отправил файл {file_name}, размер файла {get_readable_size(''.join(main_file_name))}' )
+            file_id = message.document.file_id
+            file = await bot.get_file(file_id)  # получаем объект с file_path
+
+            file_path = file.file_path
+            destination_path = f"user_files/{message.document.file_name}"
+
+            await bot.download_file(file_path, destination_path)
+            logger.info(f'Пользователь {user_name} отправил файл {file_path}, размер файла {get_readable_size(''.join(destination_path))}' )
             if user_id in config_reader.admins_ids:
-                 await state.set_state(WaitingStateChatGpt.file)
+                 await process_file_gpt_request(message, state)
+                 return
             quize_markup = ChatGptKeyboard.create_chatgpt_file_inline()
-            await bot.send_message(message.chat.id, ChatGptTexts.chatgpt_quize_text.format(file_name),reply_markup=quize_markup)
+            await bot.send_message(message.chat.id, ChatGptTexts.chatgpt_quize_text.format(file_path),reply_markup=quize_markup)
             await state.update_data(user_message_with_file=message)
         else:
             await bot.send_message(message.chat.id, "⚠️ Этот тип документа не поддерживается.")

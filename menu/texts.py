@@ -5,6 +5,26 @@ class MainMenuTexts:
         future_request_information = """
         ➖➖➖<b>{}</b>➖➖➖
         """
+        water_mark_omnigpt = """
+        ➖➖➖<b>OmniGpt</b>➖➖➖
+        <b>Токенов:</b> <i>{0} потрачено</i> 
+        """
+
+class Visualisation:
+        visualisation = """
+<blockquote>🤖 <i>{0}</i></blockquote>\n<blockquote><i>📏 {1}</i></blockquote>\n<blockquote><i>🔢 {2}</i></blockquote>
+"""
+
+class SpeechTexts:
+    synthesis_rate_info = '''
+    <b>Скорость генерируемого звука. Напишите значение от 0,25 до 4,0. 1.0 является значением по умолчанию.</b>
+    '''
+    synthesis_voice_info = '''
+    <b>Голос, который будет использоваться при создании звука. Выберите вариант из списка.</b>
+    '''
+    synthesis_information = """
+    <b>Настройки запроса</b>\n<blockquote><b>Скорость</b>: <i>{0}</i></blockquote>\n<blockquote><b>Голос:</b> <i>{1}</i></blockquote>
+    """
 
 class ChatGptTexts:
         water_mark_omnigpt = """
@@ -22,3 +42,22 @@ class ChatGptTexts:
         settings_request_with_postprocessing = """
         <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
         """
+
+class AudioToText:
+
+        synthesis_panel = '<b><blockquote>Язык аудио: {0} {1}</blockquote></b>\n<b><blockquote>Формат ответа: {2}</blockquote></b>'
+
+        languages = [
+            {'code': 'en', 'flag': '🇬🇧', 'name': 'English'},
+            {'code': 'es', 'flag': '🇪🇸', 'name': 'Spanish'},
+            {'code': 'fr', 'flag': '🇫🇷', 'name': 'French'},
+            {'code': 'ru', 'flag': '🇷🇺', 'name': 'Russian'},
+            {'code': 'zh-cn', 'flag': '🇨🇳', 'name': 'Chinese (Simplified)'},
+            {'code': 'ar', 'flag': '🇸🇦', 'name': 'Arabic'},
+            {'code': 'pt', 'flag': '🇵🇹', 'name': 'Portuguese'},
+            {'code': 'de', 'flag': '🇩🇪', 'name': 'German'},
+            {'code': 'ja', 'flag': '🇯🇵', 'name': 'Japanese'},
+            {'code': 'hi', 'flag': '🇮🇳', 'name': 'Hindi'},
+            {'code': 'it', 'flag': '🇮🇹', 'name': 'Italian'},
+            {'code': 'ko', 'flag': '🇰🇷', 'name': 'Korean'},
+        ]

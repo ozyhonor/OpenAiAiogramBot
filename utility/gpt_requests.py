@@ -72,10 +72,6 @@ async def chunks_request(chunks, message, settings):
                 except Exception as e:
                     logger.error(e)
 
-                if states.states.stop_gpt:
-                    await _handle_stop_gpt(answers, message)
-                    return [round(time() - start_time, 2), answers, used_tokens]
-
     except Exception as e:
         print(f"Ошибка: {traceback.format_exc()}")
 
@@ -120,7 +116,7 @@ async def _handle_exception(answers, message):
 # Функция для сохранения ответов в файл
 async def _save_answers_to_file(answers, message, default_name):
     try:
-        file_name = f"txt files/GPT{message.document.file_name.rsplit('.', 1)[0]}.txt"
+        file_name = f"user_files/GPT{message.document.file_name.rsplit('.', 1)[0]}.txt"
         with open(file_name, "w", encoding=TYPE_TXT_FILE or "utf-8") as file:
             for answer in answers or default_name:
                 file.write(answer + "\n\n")

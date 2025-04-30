@@ -1,8 +1,8 @@
 import math
 import asyncio
 import subprocess
-from utils.send_to_sinthesis_request import send_recognize_request
-from utils.detect_file_format import detect_file_type
+from utility.send_to_sinthesis_request import send_recognize_request
+from utility.detect_file_format import detect_file_type
 from moviepy import VideoFileClip, AudioFileClip
 
 

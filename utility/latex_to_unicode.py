@@ -46,9 +46,8 @@ async def convert_latex_to_unicode(latex_text):
     latex_text = process_text(latex_text)
     latex_text = await asyncio.to_thread(unicodeit.replace, latex_text)
 
-    latex_text = latex_text.replace('_', '＿')
     latex_text = latex_text.replace('`', '’')  # Заменим обратную кавычку на правую одинарную
-
+    latex_text = re.sub(r'\\binom\{(.*?)\}\{(.*?)\}', r'⟮\1, \2⟯', latex_text)
     # Восстанавливаем блоки кода
     for i, code_block in enumerate(code_blocks):
         latex_text = latex_text.replace(markers[i], f'```{code_block}```')

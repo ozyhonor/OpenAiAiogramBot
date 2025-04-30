@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import os
 from urllib.parse import urlparse, unquote
-from utils.checkUrl import check_url
+from utility.checkUrl import check_url
 
 
 async def download_image(url, folder="images"):

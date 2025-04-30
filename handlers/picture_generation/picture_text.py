@@ -5,29 +5,16 @@ from aiogram import Router, F
 from aiogram.types import Message
 from db.database import db
 from aiogram.fsm.context import FSMContext
-from states.states import WaitingStatePicture
 from spawnbot import bot
+from utility.picture_requests import create_solo_photo
+from utility.download_picture_from_gpt import download_images
 from aiogram.types import InputMediaPhoto
-from menu import texts
-from utils.latex_to_unicode import convert_latex_to_unicode
-import re
-from datetime import datetime
-from utils.download_picture_from_gpt import download_images
-from utils.picture_requests import create_solo_photo
+
 
 
 picture_text = Router()
 
-@picture_text.message(F.text == '🖼 Картинка')
-async def process_message_gpt_request(message: Message, state: FSMContext) -> None:
-    await state.clear()
-    await state.set_state(WaitingStatePicture.picture_text)
-    user_id = message.from_user.id
-    await bot.send_message(user_id, '<b>Ожидается текстовый запрос</b>')
-
-
-@picture_text.message(WaitingStatePicture.picture_text)
-async def go_gpt_text_request(message: Message, state: FSMContext) -> None:
+async def go_picture_text_request(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     text = message.text
     model = await db.get_user_setting('picture_model', user_id)

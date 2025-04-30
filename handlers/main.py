@@ -84,6 +84,7 @@ async def add_new_premium_user(message: Message, state: FSMContext):
     await bot.send_message(chat_id=message.text, text='Вам выдали доступ!', reply_markup=markup)
 
 
+@main_router.message(F.text == '⬅️ Назад')
 @main_router.message(Command("start"))
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     await state.clear()
@@ -93,7 +94,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
     is_user_exist_value = await db.is_user_exist(user_id)
     if is_user_exist_value:
-        await message.answer(f"Привет, <b>{user_name}!</b>", reply_markup=markup)
+        await message.answer(f"Главное меню", reply_markup=markup)
     else:
         await message.answer(f"Привет, <b>{user_name}</b> !, получите доступ", reply_markup=markup_accept)
 

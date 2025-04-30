@@ -34,6 +34,7 @@ def proxy_config():
     return proxy_configuration
 gpt_tokens = config.get('gpt', 'keys').split(',')
 print(len(gpt_tokens), 'tokens')
-
+import os
+os.environ["PATH"] = "/usr/local/bin:" + os.environ["PATH"]
 telegram_token = config.get('telegram', 'key')
 admins_ids = [int(i) for i in config.get('telegram', 'admins_ids').split(',')]

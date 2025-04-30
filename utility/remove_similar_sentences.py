@@ -7,7 +7,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import nltk
 
-# Инициализируем глобальные переменные
+
 nltk.download('stopwords', quiet=True)
 nltk.download('wordnet', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -53,12 +53,10 @@ def preprocess_corpus(corpus):
 
 async def remove_similar_sentences(filename,anserws, threshold=0.18):
     """Читает файл, удаляет дублирующиеся предложения и сохраняет результат в два файла."""
-    # Читаем файл асинхронно
     async with aiofiles.open(filename, 'r', encoding='UTF-8') as f:
         corpus = [line.strip() for line in await f.readlines() if line.strip()]
     corpus = anserws
     print(corpus)
-    # Обрабатываем текст (ТЕПЕРЬ СИНХРОННО)
     processed_corpus = preprocess_corpus(corpus)
     vect = TfidfVectorizer(min_df=1)
     tfidf = vect.fit_transform(processed_corpus)
@@ -82,10 +80,9 @@ async def remove_similar_sentences(filename,anserws, threshold=0.18):
 
     deleted_corpus = [sentence + '\n' for idx, sentence in enumerate(corpus) if idx in to_remove]
 
-    # Записываем результат в файлы
-    filtered_filename = f"{filename}".replace('txt files/', 'txt files/filtered_')
-    deleted_filename = f"{filename}".replace('txt files/', 'txt files/deleted_')
-    similar_pairs_filename = f"{filename}".replace('txt files/', 'txt files/paired_')
+    filtered_filename = f"{filename}".replace('user_files/', 'user_files/filtered_')
+    deleted_filename = f"{filename}".replace('user_files/', 'user_files/deleted_')
+    similar_pairs_filename = f"{filename}".replace('user_files/', 'user_files/paired_')
 
     async with aiofiles.open(filtered_filename, 'w', encoding='UTF-8') as f:
         await f.writelines(filtered_corpus)

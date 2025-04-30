@@ -5,9 +5,9 @@ import asyncio
 import traceback
 import aiofiles
 from random import choice
-from setup_logger import logger
+from logger_setup import logger
 from yarl import URL
-from utils.detect_file_format import detect_file_type
+from utility.detect_file_format import detect_file_type
 
 
 async def send_recognize_request(file, language='auto', future_format='text'):

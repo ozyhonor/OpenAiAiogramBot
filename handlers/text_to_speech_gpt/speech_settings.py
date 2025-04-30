@@ -2,10 +2,11 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from db.database import db
 from aiogram.fsm.context import FSMContext
-from states.states import WaitingStartSpeech
+from states.states import WaitingStateSpeech
 from spawnbot import bot
 from menu import keyboards, texts
 from aiogram import types
+from menu.keyboards import ChatGptSettingsKeyboard, SpeechKeyboard
 speech_settings_router = Router()
 
 
@@ -13,20 +14,20 @@ speech_settings_router = Router()
 async def rate_speech(message: Message, state: FSMContext) -> None:
     await state.clear()
     user_id = message.from_user.id
-    markup = keyboards.CustomKeyboard.inline_cancel()
-    await state.set_state(WaitingStartSpeech.rate)
-    await bot.send_message(chat_id=user_id, text=texts.synthesis_rate_info, reply_markup=markup)
+    markup = ChatGptSettingsKeyboard.inline_cancel()
+    await state.set_state(WaitingStateSpeech.rate)
+    await bot.send_message(chat_id=user_id, text=texts.SpeechTexts.synthesis_rate_info, reply_markup=markup)
 
 
 
-@speech_settings_router.message(WaitingStartSpeech.rate)
+@speech_settings_router.message(WaitingStateSpeech.rate)
 async def change_rate_speech(message: Message, state: FSMContext):
     user_id = message.from_user.id
     try:
         await db.update_user_setting('synthes_speed', message.text, user_id)
         await message.delete()
         await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
-        markup = keyboards.CustomKeyboard.create_inline_speech_settings().as_markup()
+        markup = SpeechKeyboard.create_inline_speech_settings()
         panel_id = await db.get_user_setting('id_speech_panel', user_id)
         new_text_settings = await reload_settings(user_id)
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
@@ -40,7 +41,7 @@ async def change_rate_speech(message: Message, state: FSMContext):
 async def voice_speech(message: Message) -> None:
     user_id = message.from_user.id
     markup = keyboards.CustomKeyboard.create_voice_menu()
-    await bot.send_message(chat_id=user_id, text=texts.synthesis_voice_info, reply_markup=markup)
+    await bot.send_message(chat_id=user_id, text=texts.SpeechTexts.synthesis_voice_info, reply_markup=markup)
 
 
 @speech_settings_router.callback_query(lambda callback_query: callback_query.data.startswith('change_voice:'))

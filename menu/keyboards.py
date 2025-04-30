@@ -1,6 +1,6 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
-
+from menu.texts import AudioToText
 
 class MainMenuKeyboard:
     @staticmethod
@@ -33,13 +33,117 @@ class MainMenuKeyboard:
             builder.button(text=f"{name}", callback_data=f"{name}")
         return builder.as_markup()
 
+class SpeechKeyboard:
+    @staticmethod
+    def create_inline_speech_settings():
+
+        names_settings_speech = ['🔊 Скорость', '🗣 Голос']
+        builder = InlineKeyboardBuilder()
+        for name in names_settings_speech:
+            builder.button(text=f"{name}", callback_data=f"{name}")
+        return builder.as_markup()
+
+    @staticmethod
+    def create_voice_menu():
+        builder = InlineKeyboardBuilder()
+        voices = [
+            'alloy', 'ash', 'ballad', 'coral', 'echo',
+            'fable', 'nova', 'onyx', 'sage', 'shimmer'
+        ]
+
+        # Добавляем кнопки по 2 в ряд
+        for i in range(0, len(voices), 2):
+            row = [
+                InlineKeyboardButton(
+                    text=voices[i], callback_data=f'change_voice:{voices[i]}'
+                )
+            ]
+            if i + 1 < len(voices):
+                row.append(
+                    InlineKeyboardButton(
+                        text=voices[i + 1], callback_data=f'change_voice:{voices[i + 1]}'
+                    )
+                )
+            builder.row(*row)
+
+        builder.row(InlineKeyboardButton(text='Отмена', callback_data='video_cancel'))
+        return builder.as_markup()
+
+    @staticmethod
+    def create_speech_main():
+
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='◀️ Назад'),
+                    KeyboardButton(text='🎙 Панель')
+                ]
+                ],  resize_keyboard=True)
+
+        return keyboard
+
+
+class AudioToTextKeyboard:
+    @staticmethod
+    def inline_synthesis_language():
+        builder = InlineKeyboardBuilder()
+        for i in range(0, len(AudioToText.languages), 6):
+            row = AudioToText.languages[i:i + 6]
+            buttons_row = [
+                InlineKeyboardButton(text=language['flag'] + ' ' + language["code"],
+                                     callback_data=f'synthesis_language:{language["code"]}') for
+                language in row
+            ]
+            builder.row(*buttons_row)
+        builder.row(
+            InlineKeyboardButton(text='🔙 Назад', callback_data='back_synthesis_language'),
+            InlineKeyboardButton(text='🏁 auto', callback_data='synthesis_language:auto')
+        )
+        return builder.as_markup()
+    @staticmethod
+    def create_synthesis_main():
+
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='◀️ Назад'),
+                    KeyboardButton(text='📝 Панель')
+                ]
+                ],  resize_keyboard=True)
+
+        return keyboard
+    @staticmethod
+    def create_inline_synthesis_settings():
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text='⚙️ Язык', callback_data='synthesis_language_settings'),
+            InlineKeyboardButton(text='📨 Формат', callback_data='synthesis_format_settings')
+        )
+        return builder.as_markup()
+    @staticmethod
+    def create_format_synthesis_settings():
+        builder = InlineKeyboardBuilder()
+        builder.row(
+        InlineKeyboardButton(text='Текст', callback_data=f'synthesis_format:text'),
+        InlineKeyboardButton(text='Субтитры', callback_data=f'synthesis_format:subtitles'),
+        InlineKeyboardButton(text='Слова', callback_data=f'synthesis_format:word'))
+
+        return builder.as_markup()
 
 class VisualisationKeyboard:
+    @staticmethod
+    def create_inline_picture_models():
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text='🥈 GPT Image', callback_data='model_picture:gpt-image-1'),
+            InlineKeyboardButton(text='🥇 dall-e-3', callback_data='model_picture:dall-e-3')
+        )
+        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='picture_back'))
+        return builder.as_markup()
     @staticmethod
     def create_inline_picture_settings():
         builder = InlineKeyboardBuilder()
         builder.row(
-            InlineKeyboardButton(text='⚙️ Настройки', callback_data='settings_picture'),
             InlineKeyboardButton(text='🤖 Модель', callback_data='model_picture'),
             InlineKeyboardButton(text='📏 Размер', callback_data='size_picture'),
             InlineKeyboardButton(text='🔢 Количество', callback_data='count_picture')
@@ -51,12 +155,11 @@ class VisualisationKeyboard:
         keyboard = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='ℹ️ Инфо'),
-                    KeyboardButton(text='🗄 Очередь'),
-                    KeyboardButton(text='🎛 Панель')
+                    KeyboardButton(text='◀️ Назад'),
+                    KeyboardButton(text='👨‍🎨 Панель')
                 ]
                 ],  resize_keyboard=True)
-
+        return keyboard
     @staticmethod
     def create_picture_count():
         builder = InlineKeyboardBuilder()
@@ -82,26 +185,28 @@ class VisualisationKeyboard:
     def create_picture_size():
         builder = InlineKeyboardBuilder()
         builder.row(
-            InlineKeyboardButton(text='256x256', callback_data='picture_size:256x256'),
-            InlineKeyboardButton(text='512x512', callback_data='picture_size:512x512'),
-            InlineKeyboardButton(text='1024x1024', callback_data='picture_size:1024x1024')
+        InlineKeyboardButton(text='1024x1024', callback_data='picture_size:1024x1024')
         )
+        builder.row(InlineKeyboardButton(text='1792x1024', callback_data='picture_size:1792x1024'),
+            )
         builder.row(
-            InlineKeyboardButton(text='1792x1024', callback_data='picture_size:1792x1024'),
             InlineKeyboardButton(text='1024x1792', callback_data='picture_size:1024x1792')
         )
         builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='picture_back'))
         return builder.as_markup()
 
+
     @staticmethod
-    def create_inline_picture_models():
-        builder = InlineKeyboardBuilder()
-        builder.row(
-            InlineKeyboardButton(text='🥈 dall-e-2', callback_data='model_picture:dall-e-2'),
-            InlineKeyboardButton(text='🥇 dall-e-3', callback_data='model_picture:dall-e-3')
-        )
-        builder.row(InlineKeyboardButton(text='🔙 Назад', callback_data='picture_back'))
-        return builder.as_markup()
+    def create_picture_menu():
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='⬅️ Назад'),
+                    KeyboardButton(text='👨‍🎨 Панель')
+                ]
+                ],  resize_keyboard=True)
+
+        return keyboard
 
 
 class ChatGptKeyboard:
@@ -111,9 +216,8 @@ class ChatGptKeyboard:
         keyboard = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='ℹ️ Инфо'),
-                    KeyboardButton(text='🗄 Очередь'),
-                    KeyboardButton(text='🎛 Панель')
+                    KeyboardButton(text='⬅️ Назад'),
+                    KeyboardButton(text='🤖 Панель')
                 ]
                 ],  resize_keyboard=True)
 

@@ -3,12 +3,12 @@ import asyncio
 import traceback
 import aiohttp
 from config_reader import gpt_tokens, proxy_config
-from setup_logger import logger
+from logger_setup import logger
 from time import time
 
 
-async def create_solo_photo(text, size="1024x1024", count_of_pictures=1, model='dall-e-2',
-                            max_retries=4):
+async def create_solo_photo(text, size="1024x1024", count_of_pictures=1, model='dall-e-3',
+                            max_retries=2):
     start_time = time()
 
     async def make_request(session, attempt, text):
@@ -30,7 +30,7 @@ async def create_solo_photo(text, size="1024x1024", count_of_pictures=1, model='
             "n": count_of_pictures,  # Сколько изображений нужно создать
             "size": size  # Размер изображения (например, '1024x1024' или '1792x1024')
         }
-
+        print(data)
         try:
             async with session.post(url, json=data, headers=headers, proxy=proxy) as response:
                 result = await response.json()

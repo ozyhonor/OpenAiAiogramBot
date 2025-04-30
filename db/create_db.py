@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
     id_synthesis_panel INTEGER DEFAULT 0,
 
     -- Настройки для генирации изображения
-    picture_model TEXT DEFAULT 'dall-e-2',
-    picture_prompt TEXT DEFAULT 'Нарисуй картину маслом.',
+    picture_model TEXT DEFAULT 'dall-e-3',
     picture_size TEXT DEFAULT '1024x1024',
     picture_count INTEGER CHECK (picture_count >= 1 AND synthes_speed <= 10) DEFAULT 1,
 

@@ -5,7 +5,16 @@ class WaitingStateChatGpt(StatesGroup):
     wait_message_from_user = State()
     file = State()
 
+class WaitingStateAudioToText(StatesGroup):
+    wait_message_from_user = State()
+
+class WaitingStateSpeech(StatesGroup):
+    wait_message_from_user = State()
+    rate = State()
+    file = State()
+
 class WaitingStatesChatGptSettings(StatesGroup):
+
     frequency_penalty_state = State()  # уникальност
     presence_penalty_state = State()  # креативность
     reasoning_effort_gpt = State()  # логика
@@ -29,4 +38,4 @@ class AdminStates(StatesGroup):
 
 
 class WaitingStateVisualisation(StatesGroup):
-    ...
+    wait_message_from_user = State()

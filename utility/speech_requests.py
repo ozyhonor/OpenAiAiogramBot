@@ -13,14 +13,14 @@ from config_reader import proxy_config
 import concurrent.futures
 from time import time
 from time import time
-from utils.decode_any_format import TYPE_TXT_FILE
+from utility.decode_any_format import TYPE_TXT_FILE
 from moviepy import AudioFileClip, concatenate_audioclips
 
 import aiohttp
 import aiofiles
 from time import time
 from random import choice
-from setup_logger import logger
+from logger_setup import logger
 
 
 async def openai_audio_request(voice, input_text, output_file, speed, model='tts-1'):
@@ -86,7 +86,7 @@ async def file_request(chunks, message):
 
     try:
         tasks = [
-            openai_audio_request(voice, chunk, f'audio_files/{name}.mp3', rate)
+            openai_audio_request(voice, chunk, f'user_files/{name}.mp3', rate)
             for name, chunk in enumerate(chunks)
         ]
 
@@ -101,13 +101,6 @@ async def file_request(chunks, message):
                 if len(answers) % 10 == 0:
                     await _update_progress(answers, chunks, message, msg)
                     await bot.send_chat_action(user_id, 'record_voice')
-
-                if states.states.stop_gpt:
-                    states.states.stop_gpt = False
-                    await bot.send_chat_action(message.from_user.id, 'upload_audio')
-                    await _handle_exception(answers, message)
-                    await complete_audio_files(answers)
-                    return [answers, token_coast]
 
             except CancelledError:
                 logger.warning(f"Task {i} was cancelled.")
@@ -124,6 +117,7 @@ async def file_request(chunks, message):
     await _update_progress(answers, chunks, message, msg)
     await _handle_exception(answers, message)
     await complete_audio_files(answers)
+    print(answers, token_coast)
     return [answers, token_coast]
 
 
@@ -138,11 +132,11 @@ async def _update_progress(answers, chunks, message, msg):
         logger.error(f"Error updating progress: {e}")
 
 
-async def complete_audio_files(files, input_folder="audio_files"):
+async def complete_audio_files(files, input_folder="user_files"):
     if not files:
         logger.error("No audio files generated.")
         return
-    files =sorted([file for file in os.listdir('audio_files') if ('.mp3' in file and not('omnibot' in file))])
+
     if len(files) == 1:
         # Если только один файл, переименуем его в output.mp3
         single_file = files[0]
@@ -150,7 +144,6 @@ async def complete_audio_files(files, input_folder="audio_files"):
         os.rename(single_file, output_file)
         logger.info(f"Only one audio file generated, saved as {output_file}")
     else:
-        # Если несколько файлов, объединяем их
         output_file = os.path.join(input_folder, "output.mp3")
         file_names = [os.path.basename(file) for file in files]
         sorted_mp3_files = sorted(file_names, key=lambda x: int(os.path.splitext(x)[0]))
@@ -165,17 +158,12 @@ async def complete_audio_files(files, input_folder="audio_files"):
             logger.error("No valid audio clips found to concatenate.")
 
 
-async def _handle_stop_gpt(answers, message):
-    states.states.stop_gpt = False
-    await _write_answers_to_file(answers, message)
-
-
 async def _handle_exception(answers, message):
     await _write_answers_to_file(answers, message)
 
 
 async def _write_answers_to_file(answers, message):
-    filename = f"txt files/GPT{message.document.file_name.rsplit('.', 1)[0] + '.txt'}"
+    filename = f"user_files/GPT{message.document.file_name.rsplit('.', 1)[0] + '.txt'}"
     async with aiofiles.open(filename, "w", encoding=TYPE_TXT_FILE or "utf-8") as file:
         for answer in answers or ['OmniBot']:
             await file.write(answer + "\n\n")

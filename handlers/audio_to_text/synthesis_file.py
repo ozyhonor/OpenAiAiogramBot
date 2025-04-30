@@ -5,29 +5,16 @@ from aiogram import Router, F
 from aiogram.types import Message, ContentType
 from db.database import db
 from aiogram.fsm.context import FSMContext
-from states.states import WaitingStateSynthesis
+
 from spawnbot import bot
 from aiogram.types import InputMediaPhoto
 from menu import texts
-from utils.synthesis_file import send_file_to_synthesis
-from utils.latex_to_unicode import convert_latex_to_unicode
-import re
-from datetime import datetime
-from utils.download_picture_from_gpt import download_images
-from utils.picture_requests import create_solo_photo
+from utility.synthesis_file import send_file_to_synthesis
 
 
 synthesis_file = Router()
 
-@synthesis_file.message(F.text == '💾 Файл')
-async def process_message_sythesis_request(message: Message, state: FSMContext) -> None:
-    await state.clear()
-    await state.set_state(WaitingStateSynthesis.file)
-    user_id = message.from_user.id
-    await bot.send_message(user_id, '<b>Ожидается файловый запрос</b>')
 
-
-@synthesis_file.message(WaitingStateSynthesis.file)
 async def go_synthesis_file_request(message: Message, state: FSMContext) -> None:
     user_id = message.from_user.id
 
@@ -41,6 +28,10 @@ async def go_synthesis_file_request(message: Message, state: FSMContext) -> None
         download_dir = "audio_files"
     elif message.content_type == ContentType.VIDEO:
         file_id = message.video.file_id
+        file_type = "video"
+        download_dir = "video_files"
+    elif message.content_type == ContentType.VIDEO_NOTE:
+        file_id = message.video_note.file_id
         file_type = "video"
         download_dir = "video_files"
     else:
