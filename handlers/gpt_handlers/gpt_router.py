@@ -89,12 +89,8 @@ async def detect_message_from_user(message: Message, state: FSMContext):
 
             await bot.download_file(file_path, destination_path)
             logger.info(f'Пользователь {user_name} отправил файл {file_path}, размер файла {get_readable_size(''.join(destination_path))}' )
-            if user_id in config_reader.admins_ids:
-                 await process_file_gpt_request(message, state)
-                 return
-            quize_markup = ChatGptKeyboard.create_chatgpt_file_inline()
-            await bot.send_message(message.chat.id, ChatGptTexts.chatgpt_quize_text.format(file_path),reply_markup=quize_markup)
-            await state.update_data(user_message_with_file=message)
+            await process_file_gpt_request(message, state)
+
         else:
             await bot.send_message(message.chat.id, "⚠️ Этот тип документа не поддерживается.")
 
