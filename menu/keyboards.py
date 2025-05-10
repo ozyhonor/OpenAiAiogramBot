@@ -268,8 +268,8 @@ class ChatGptSettingsKeyboard:
         builder.row(
             InlineKeyboardButton(text='o4-mini', callback_data=f'gpt_model:{postsettings}o4-mini'),
             InlineKeyboardButton(text='o3-mini-2025-01-31', callback_data=f'gpt_model:{postsettings}o3-mini-2025-01-31'),
-            InlineKeyboardButton(text='chatgpt-4o-latest', callback_data=f'gpt_model:{postsettings}chatgpt-4o-latest')
-
+            InlineKeyboardButton(text='chatgpt-4o-latest', callback_data=f'gpt_model:{postsettings}chatgpt-4o-latest'),
+            InlineKeyboardButton(text='gpt-4o-search-preview', callback_data=f'gpt_model:{postsettings}gpt-4o-search-preview')
         )
         builder.row(
             InlineKeyboardButton(text='🥉gpt-3.5-turbo', callback_data=f'gpt_model:{postsettings}gpt-3.5-turbo'),

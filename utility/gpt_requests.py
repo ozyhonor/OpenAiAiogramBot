@@ -146,6 +146,14 @@ async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', f
                 {"role": "user", "content": f"{text or message.text}"}
             ]
         }
+    elif model == 'gpt-4o-search-preview':
+        data = {
+            "model": f"{model}",
+            "messages": [
+                {"role": "system", "content": f"{settings or model}"},
+                {"role": "user", "content": f"{text or message.text}"}
+            ]
+        }
     else:
         data = {
             "model": f"{model}",
