@@ -3,6 +3,8 @@ from aiogram.types.input_file import FSInputFile
 import os
 from aiogram import Router, F
 from aiogram.types import Message
+
+import logger_setup
 from utility.remove_similar_sentences import remove_similar_sentences
 from db.database import db
 from aiogram.fsm.context import FSMContext
@@ -13,6 +15,7 @@ from menu import texts
 from utility.decode_any_format import detect_file_format
 from utility.latex_to_unicode import convert_latex_to_unicode
 import re
+from logger_setup import logger
 from datetime import datetime
 from utility.gpt_requests import solo_request
 from utility.split_text_for_gpt import split_text
@@ -44,12 +47,12 @@ async def go_gpt_text_request(message: Message) -> None:
 
     await bot.send_chat_action(user_id, 'typing')
     answer = await solo_request(None, message, degree, None, model, frequency=frequency, reasoning=reasoning_effort, presence=presence)
-    print(answer[1])
     cleared_answer = await convert_latex_to_unicode(answer[1])
 
     await message.answer(texts.ChatGptTexts.water_mark_omnigpt.format(answer[2]))
     try:
         cleared_answer_str = str(cleared_answer)
+        print(cleared_answer)
         if len(cleared_answer_str) > 4000:
             file_path = f'{re.sub(r'[:\-]', '_', str(datetime.now()).split('.')[0])}.txt'
 
@@ -60,7 +63,18 @@ async def go_gpt_text_request(message: Message) -> None:
             await bot.send_document(message.chat.id, document)
             os.remove(file_path)
         else:
-            await message.answer(cleared_answer_str, parse_mode="Markdown")
+            try:
+                await message.answer(cleared_answer_str, parse_mode="Markdown")
+            except Exception as e:
+                file_path = f'{re.sub(r'[:\-]', '_', str(datetime.now()).split('.')[0])}.txt'
+
+                logger.error(e)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(cleared_answer_str)
+
+                document = FSInputFile(file_path)
+                await bot.send_document(message.chat.id, document)
+
     except:
         print(traceback.format_exc())
 

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     id_speech_panel INTEGER DEFAULT 0,
     id_vision_panel INTEGER DEFAULT 0,
     id_synthesis_panel INTEGER DEFAULT 0,
-
+    
     -- Настройки для генирации изображения
     picture_model TEXT DEFAULT 'dall-e-3',
     picture_size TEXT DEFAULT '1024x1024',

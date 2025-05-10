@@ -125,28 +125,51 @@ async def _save_answers_to_file(answers, message, default_name):
 
 async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', frequency=0, presence=0, reasoning='medium',max_retries=4):
     start_time = time()
-
+    if model == 'o4-mini' and degree<1:
+        degree = 1
+        data = {
+            "model": f"{model}",
+            "messages": [
+                {"role": "system", "content": f"{settings or model}"},
+                {"role": "user", "content": f"{text or message.text}"}
+            ],
+            "temperature": degree,
+            "frequency_penalty": frequency,
+            "presence_penalty": presence
+            # "reasoning_effort": reasoning
+        }
+    elif model == 'o3-mini-2025-01-31':
+        data = {
+            "model": f"{model}",
+            "messages": [
+                {"role": "system", "content": f"{settings or model}"},
+                {"role": "user", "content": f"{text or message.text}"}
+            ]
+        }
+    else:
+        data = {
+            "model": f"{model}",
+            "messages": [
+                {"role": "system", "content": f"{settings or model}"},
+                {"role": "user", "content": f"{text or message.text}"}
+            ],
+            "temperature": degree,
+            "frequency_penalty": frequency,
+            "presence_penalty": presence
+            # "reasoning_effort": reasoning
+        }
     async def make_request(session, attempt, text):
         proxy = proxy_config().get('https')
         logger.info(f"Attempt {attempt} for request.")
-        basic_settings = f'Ты модель {model}'
+
+
         api_key = choice(gpt_tokens)
         url = "https://api.openai.com/v1/chat/completions"
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_key}"
         }
-        data = {
-            "model": f"{model}",
-            "messages": [
-                {"role": "system", "content": f"{settings or basic_settings}"},
-                {"role": "user", "content": f"{text or message.text}"}
-            ],
-            "temperature": degree,
-            "frequency_penalty": frequency,
-            "presence_penalty": presence
-            #"reasoning_effort": reasoning
-        }
+
 
         try:
             async with session.post(url, json=data, headers=headers, proxy=proxy) as response:

@@ -27,21 +27,51 @@ class SpeechTexts:
     """
 
 class ChatGptTexts:
-        water_mark_omnigpt = """
-        ➖➖➖<b>OmniGpt</b>➖➖➖
-        <b>Токенов:</b> <i>{0} потрачено</i> 
-        """
-        write_gpt_settings = """
-        <b>Введите настройки запроса</b>
-        """
-        dict_bool = {'✅': 1, '❌': 0}
-        chatgpt_quize_text = "Отправить файл {0} chatgpt? Ответ будет в файле формата .txt"
-        settings_request = """
-        <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
-        """
-        settings_request_with_postprocessing = """
-        <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
-        """
+    subscript_map = {
+        'a': 'ₐ',
+        'e': 'ₑ',
+        'h': 'ₕ',
+        'i': 'ᵢ',
+        'j': 'ⱼ',
+        'k': 'ₖ',
+        'l': 'ₗ',
+        'm': 'ₘ',
+        'n': 'ₙ',
+        'o': 'ₒ',
+        'p': 'ₚ',
+        'r': 'ᵣ',
+        's': 'ₛ',
+        't': 'ₜ',
+        'u': 'ᵤ',
+        'v': 'ᵥ',
+        'x': 'ₓ',
+        'y': 'ᵧ',
+        '0': '₀',
+        '1': '₁',
+        '2': '₂',
+        '3': '₃',
+        '4': '₄',
+        '5': '₅',
+        '6': '₆',
+        '7': '₇',
+        '8': '₈',
+        '9': '₉',
+    }
+    water_mark_omnigpt = """
+    ➖➖➖<b>OmniGpt</b>➖➖➖
+    <b>Токенов:</b> <i>{0} потрачено</i> 
+    """
+    write_gpt_settings = """
+    <b>Введите настройки запроса</b>
+    """
+    dict_bool = {'✅': 1, '❌': 0}
+    chatgpt_quize_text = "Отправить файл {0} chatgpt? Ответ будет в файле формата .txt"
+    settings_request = """
+    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
+    """
+    settings_request_with_postprocessing = """
+    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
+    """
 
 class AudioToText:
 

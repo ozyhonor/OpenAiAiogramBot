@@ -4,9 +4,11 @@ from db.database import db
 from aiogram.fsm.context import FSMContext
 from states.states import WaitingStatesChatGptSettings
 from spawnbot import bot
+from states.states import WaitingStateChatGpt
 from menu.keyboards import ChatGptSettingsKeyboard, ChatGptKeyboard
 from menu.texts import ChatGptTexts
 from logger_setup import logger
+from states.states import WaitingStatesChatGptSettings
 from menu import keyboards, texts
 
 gpt_settings = Router()
@@ -41,6 +43,7 @@ async def back_from_model_menu(callback_query: CallbackQuery, state: FSMContext)
     user_id = callback_query.from_user.id
     message_id = callback_query.message.message_id
     await state.clear()
+    await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     process_bool = await db.get_user_setting('postprocess_bool', user_id)
     markup = ChatGptKeyboard.create_gpt_settings(process_bool)
     await bot.edit_message_reply_markup(chat_id=user_id, message_id=message_id, reply_markup=markup)
@@ -111,6 +114,7 @@ async def process_settings(message: Message, state: FSMContext) -> None:
     await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
     await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
     await state.clear()
+    await state.set_state(WaitingStateChatGpt.wait_message_from_user)
 
 
 @gpt_settings.callback_query(F.data == '📉 Коэффициент')
@@ -139,6 +143,8 @@ async def process_coefficient(message: Message, state: FSMContext) -> None:
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
         await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
         await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     except ValueError:
         print('123123')
 
@@ -169,6 +175,7 @@ async def process_degree(message: Message, state: FSMContext) -> None:
     await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
     await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
     await state.clear()
+    await state.set_state(WaitingStateChatGpt.wait_message_from_user)
 
 
 @gpt_settings.callback_query(F.data == '🦄 Уникальность')
@@ -197,6 +204,7 @@ async def process_frequency(message: Message, state: FSMContext) -> None:
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
         await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
         await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     except ValueError:
         print('123123')
 
@@ -227,6 +235,7 @@ async def process_presence_penalty(message: Message, state: FSMContext) -> None:
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
         await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
         await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     except Exception as e:
         logger.exception(e)
 
@@ -257,6 +266,7 @@ async def process_reasoning_effort_gpt(message: Message, state: FSMContext) -> N
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
         await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
         await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     except ValueError:
         print('123123')
 
@@ -287,6 +297,7 @@ async def process_degree(message: Message, state: FSMContext) -> None:
         await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
         await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
         await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
     except ValueError:
         print('123123')
 
