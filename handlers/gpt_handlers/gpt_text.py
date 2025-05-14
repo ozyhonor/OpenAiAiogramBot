@@ -3,6 +3,7 @@ from aiogram.types.input_file import FSInputFile
 import os
 from aiogram import Router, F
 from aiogram.types import Message
+from utility.work_with_history_message import save_messages, get_last_n_messages, load_messages
 
 import logger_setup
 from utility.remove_similar_sentences import remove_similar_sentences
@@ -44,9 +45,15 @@ async def go_gpt_text_request(message: Message) -> None:
     frequency = await db.get_user_setting('chatgpt_frequency', user_id)
     presence = await db.get_user_setting('chatgpt_presence', user_id)
     reasoning_effort = await db.get_user_setting('chatgpt_reasoning_effort', user_id)
+    history_count = await db.get_user_setting('history_count', user_id)
+    if history_count == 0:
+        history_message = ''
+    else:
+        all_history_message = await load_messages(f'history_messages/{user_id}.json')
+        history_message = get_last_n_messages(all_history_message, history_count)
 
     await bot.send_chat_action(user_id, 'typing')
-    answer = await solo_request(None, message, degree, None, model, frequency=frequency, reasoning=reasoning_effort, presence=presence)
+    answer = await solo_request(None, message, degree, None, model, frequency=frequency, reasoning=reasoning_effort, presence=presence, history_message=history_message, user_id=user_id)
     cleared_answer = await convert_latex_to_unicode(answer[1])
 
     await message.answer(texts.ChatGptTexts.water_mark_omnigpt.format(answer[2]))

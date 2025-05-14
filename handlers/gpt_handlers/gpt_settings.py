@@ -208,6 +208,37 @@ async def process_frequency(message: Message, state: FSMContext) -> None:
     except ValueError:
         print('123123')
 
+@gpt_settings.callback_query(F.data =='📝 История')
+async def change_history_count_gpt(callback_query: CallbackQuery, state: FSMContext) -> None:
+    user_id = callback_query.from_user.id
+    markup = ChatGptSettingsKeyboard.inline_cancel()
+    await state.set_state(WaitingStatesChatGptSettings.history_count)
+    await bot.send_message(user_id, '<b>Введите количество сохраняемых ответов от 0 до 20</b>', reply_markup=markup)
+
+
+@gpt_settings.message(WaitingStatesChatGptSettings.history_count)
+async def process_history_count(message: Message, state: FSMContext) -> None:
+    user_id = message.from_user.id
+    panel_id = await db.get_user_setting('id_gpt_panel', user_id)
+    process_bool = await db.get_user_setting('postprocess_bool', user_id)
+    markup = ChatGptKeyboard.create_gpt_settings(process_bool)
+    try:
+        history_count = float(message.text)
+
+        if not(0<=history_count and history_count<=20):
+            raise ValueError
+        await db.update_user_setting('history_count', history_count, user_id)
+        await message.delete()
+        await bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id - 1)
+        new_text_settings = await reload_settings(user_id)
+        await bot.edit_message_text(chat_id=user_id, message_id=panel_id, text=new_text_settings)
+        await bot.edit_message_reply_markup(chat_id=user_id, message_id=panel_id, reply_markup=markup)
+        await state.clear()
+        await state.set_state(WaitingStateChatGpt.wait_message_from_user)
+    except Exception as e:
+        logger.exception(e)
+
+
 
 @gpt_settings.callback_query(F.data == '🚀 Креативность')
 async def change_presence_penalty_gpt(callback_query: CallbackQuery, state: FSMContext) -> None:
@@ -315,7 +346,7 @@ async def reload_settings(user_id):
     frequency_penalty_gpt = await db.get_user_setting('chatgpt_frequency', user_id)
     reasoning_effort_gpt = await db.get_user_setting('chatgpt_reasoning_effort', user_id)
     presence_penalty_gpt = await db.get_user_setting('chatgpt_presence', user_id)
-
+    history_count = await db.get_user_setting('history_count', user_id)
     new_text_to_panel = ChatGptTexts.settings_request_with_postprocessing.format(settings,
                                                                           degree,
                                                                           gpt_model,
@@ -323,5 +354,6 @@ async def reload_settings(user_id):
                                                                           similarity_threshold,
                                                                           presence_penalty_gpt,
                                                                           reasoning_effort_gpt,
-                                                                          frequency_penalty_gpt)
+                                                                          frequency_penalty_gpt,
+                                                                            history_count)
     return new_text_to_panel

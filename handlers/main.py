@@ -1,6 +1,10 @@
 from menu.keyboards import MainMenuKeyboard
 from middlewears.access import admin_required
 from aiogram import types
+import os
+import json
+from menu.texts import ChatGptTexts
+import aiofiles
 from spawnbot import bot
 from config_reader import admins_ids
 from aiogram import Router, F
@@ -83,6 +87,12 @@ async def add_new_premium_user(message: Message, state: FSMContext):
 
     await bot.send_message(chat_id=message.text, text='Вам выдали доступ!', reply_markup=markup)
 
+async def write_json_file(filename, data):
+    async with aiofiles.open(filename, 'w', encoding='utf-8') as f:
+        # Сериализуем данные в строку
+        json_str = json.dumps(data, ensure_ascii=False, indent=2)
+        await f.write(json_str)
+
 
 @main_router.message(F.text == '⬅️ Назад')
 @main_router.message(Command("start"))
@@ -95,6 +105,8 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     is_user_exist_value = await db.is_user_exist(user_id)
     if is_user_exist_value:
         await message.answer(f"Главное меню", reply_markup=markup)
+        if not(os.path.isfile(f'history_messages/{user_id}.json')):
+            await write_json_file(f'history_messages/{user_id}.json', ChatGptTexts.history_data)
     else:
         await message.answer(f"Привет, <b>{user_name}</b> !, получите доступ", reply_markup=markup_accept)
 

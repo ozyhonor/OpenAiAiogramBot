@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     picture_model TEXT DEFAULT 'dall-e-3',
     picture_size TEXT DEFAULT '1024x1024',
     picture_count INTEGER CHECK (picture_count >= 1 AND synthes_speed <= 10) DEFAULT 1,
+    history_count INTEGER CHECK (history_count >= 0 AND history_count <= 20) DEFAULT 0,
 
     chatgpt_frequency FLOAT CHECK (chatgpt_frequency >= -2 AND chatgpt_frequency <= 2) DEFAULT 0 ,
     chatgpt_presence  FLOAT CHECK (chatgpt_presence >= -2 AND chatgpt_presence <= 2) DEFAULT 0,
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
     -- Настройки для озвучки
     synthes_voice TEXT CHECK (synthes_voice IN ('alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer')) DEFAULT 'nova',
     synthes_speed FLOAT CHECK (synthes_speed >= 0.25 AND synthes_speed <= 4.0) DEFAULT 1,
-
+    
     -- Постпроцессинг (GPT и Vision)
     vision_prompt TEXT DEFAULT '-',
     vision_model TEXT DEFAULT 'gpt-4o',

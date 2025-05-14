@@ -57,6 +57,16 @@ class ChatGptTexts:
         '8': '₈',
         '9': '₉',
     }
+    history_data = [
+        {
+            "text": "-",
+            "from": "user"
+        },
+        {
+            "text": "-",
+            "from": "openai"
+        }
+    ]
     water_mark_omnigpt = """
     ➖➖➖<b>OmniGpt</b>➖➖➖
     <b>Токенов:</b> <i>{0} потрачено</i> 
@@ -67,10 +77,10 @@ class ChatGptTexts:
     dict_bool = {'✅': 1, '❌': 0}
     chatgpt_quize_text = "Отправить файл {0} chatgpt? Ответ будет в файле формата .txt"
     settings_request = """
-    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
+    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote><i>📝 {8}</i></blockquote>
     """
     settings_request_with_postprocessing = """
-    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>
+    <b>Настройки запроса</b>:\n<pre><i>{0}</i></pre><i></i>\n\n<blockquote>🌡 <i>{1}</i></blockquote>\n<blockquote><i>🤖 {2}</i></blockquote>\n<blockquote><i>📏 {3}</i></blockquote>\n<blockquote><i>⚖️ {4}</i></blockquote>\n<blockquote><i>🚀 {5}</i></blockquote>\n<blockquote><i>🧠 {6}</i></blockquote>\n<blockquote><i>🦄 {7}</i></blockquote>\n<blockquote><i>📝 {8}</i></blockquote>
     """
 
 class AudioToText:

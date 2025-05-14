@@ -23,6 +23,7 @@ class WaitingStatesChatGptSettings(StatesGroup):
     queue_files = State()
     settings = State()
     text_gpt = State()
+    history_count = State()
     file_gpt = State()
     model = State()
     degree = State()

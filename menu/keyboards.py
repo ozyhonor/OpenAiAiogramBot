@@ -249,6 +249,9 @@ class ChatGptKeyboard:
             InlineKeyboardButton(text='🦄 Уникальность', callback_data='🦄 Уникальность')
         )
         builder.row(
+            InlineKeyboardButton(text=f'📝 История', callback_data='📝 История')
+        )
+        builder.row(
             InlineKeyboardButton(text=f'🔬Сортировка {dict_bool[postprocess_bool]}', callback_data='postsettings')
         )
         return builder.as_markup()

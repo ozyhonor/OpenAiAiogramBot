@@ -3,6 +3,7 @@ import requests
 import traceback
 import states.states
 import re
+from utility.work_with_history_message import load_messages, add_message, save_messages
 from config_reader import gpt_tokens
 
 from spawnbot import bot
@@ -123,35 +124,33 @@ async def _save_answers_to_file(answers, message, default_name):
     except:
         ...
 
-async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', frequency=0, presence=0, reasoning='medium',max_retries=4):
+async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', frequency=0, presence=0, reasoning='medium',max_retries=4, history_message='', user_id=0):
     start_time = time()
+    content_to_request = text or message.text
+    if history_message != '':
+        content_to_request = 'Это предыдущие запросы пользователя\n'+str(history_message)+'\nЭто текущий запрос\n'+(text or message.text)
+        print('THIS HISTORY')
+        print(content_to_request)
+
     if model == 'o4-mini' and degree<1:
         degree = 1
         data = {
             "model": f"{model}",
             "messages": [
                 {"role": "system", "content": f"{settings or model}"},
-                {"role": "user", "content": f"{text or message.text}"}
+                {"role": "user", "content": f"{content_to_request}"}
             ],
             "temperature": degree,
             "frequency_penalty": frequency,
             "presence_penalty": presence
             # "reasoning_effort": reasoning
         }
-    elif model == 'o3-mini-2025-01-31':
+    elif model == 'o3-mini-2025-01-31' or model == 'gpt-4o-search-preview':
         data = {
             "model": f"{model}",
             "messages": [
                 {"role": "system", "content": f"{settings or model}"},
-                {"role": "user", "content": f"{text or message.text}"}
-            ]
-        }
-    elif model == 'gpt-4o-search-preview':
-        data = {
-            "model": f"{model}",
-            "messages": [
-                {"role": "system", "content": f"{settings or model}"},
-                {"role": "user", "content": f"{text or message.text}"}
+                {"role": "user", "content": f"{content_to_request}"}
             ]
         }
     else:
@@ -159,14 +158,14 @@ async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', f
             "model": f"{model}",
             "messages": [
                 {"role": "system", "content": f"{settings or model}"},
-                {"role": "user", "content": f"{text or message.text}"}
+                {"role": "user", "content": f"{content_to_request}"}
             ],
             "temperature": degree,
             "frequency_penalty": frequency,
             "presence_penalty": presence
             # "reasoning_effort": reasoning
         }
-    async def make_request(session, attempt, text):
+    async def make_request(session, attempt, text, requested_text=''):
         proxy = proxy_config().get('https')
         logger.info(f"Attempt {attempt} for request.")
 
@@ -184,10 +183,21 @@ async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', f
                 result = await response.json()
                 status = response.status
                 text = await response.text()
-                print(result)
                 answer = result['choices'][0]['message']['content']
                 tokens_used = result['usage']['total_tokens']
                 logger.info(f"Request successful: {tokens_used} tokens used.")
+
+                if history_message != '':
+                    history_file = f'history_messages/{user_id}.json'
+                    messages = await load_messages(history_file)
+                    new_message = {"text": f"{message.text}", "from": "user"}
+                    new = await add_message(messages, new_message)
+                    await save_messages(messages, history_file)
+                    new_message = {"text": f"{answer}", "from": f"{model}"}
+                    new = await add_message(messages, new_message)
+                    await save_messages(messages, history_file)
+
+
                 return round(time() - start_time, 2), answer, tokens_used
 
         except Exception as e:

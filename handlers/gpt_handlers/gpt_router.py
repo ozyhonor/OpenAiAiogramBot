@@ -41,16 +41,16 @@ async def create_gpt_request_for_request(message: Message, state: FSMContext):
     frequency_penalty_gpt = await db.get_user_setting('chatgpt_frequency', user_id)
     reasoning_effort_gpt = await db.get_user_setting('chatgpt_reasoning_effort', user_id)
     presence_penalty_gpt = await db.get_user_setting('chatgpt_presence', user_id)
-
-    new_text_to_panel = ChatGptTexts.settings_request.format(setting,
+    history_count = await db.get_user_setting('history_count', user_id)
+    new_text_to_panel = ChatGptTexts.settings_request_with_postprocessing.format(setting,
                                                                           degree,
                                                                           model,
                                                                           tokens,
                                                                           similarity_threshold,
                                                                           presence_penalty_gpt,
                                                                           reasoning_effort_gpt,
-                                                                          frequency_penalty_gpt)
-
+                                                                          frequency_penalty_gpt,
+                                                                            history_count)
     await message.answer(f'{MainMenuTexts.future_request_information.format(f_text)}', reply_markup=markup_reply)
     id_gpt_panel = await message.answer(new_text_to_panel,
                                         reply_markup=inline_reply)
