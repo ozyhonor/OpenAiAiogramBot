@@ -15,13 +15,14 @@ from utils.gpt_requests import solo_request
 
 vision_photo_router = Router()
 
-@vision_photo_router.message(F.text == '📷 Фото')
-async def process_message_gpt_request(message: Message, state: FSMContext) -> None:
-    await state.clear()
-    await state.set_state(WaitingStateVision.vision_photo)
+
+async def go_gpt_text_request(message: Message) -> None:
     user_id = message.from_user.id
-    if not(await db.is_user_exist(user_id)): return
-    await bot.send_message(user_id, '<b>Ожидается фото</b>')
+    degree = await db.get_user_setting('chatgpt_degree', user_id)
+    settings = await db.get_user_setting('chatgpt_settings', user_id)
+    model = await db.get_user_setting('chatgpt_model', user_id)
+    frequency = await db.get_user_setting('chatgpt_frequency', user_id)
+
 
 
 @vision_photo_router.message(WaitingStateVision.vision_photo)

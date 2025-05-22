@@ -14,6 +14,8 @@ from handlers.audio_to_text.audio_to_text_router import audio_tt_router
 from handlers.audio_to_text.audio_tt_settings import audio_tt_settings
 from handlers.text_to_speech_gpt.speech_router import speech_router
 from handlers.text_to_speech_gpt.speech_settings import speech_settings_router
+from handlers.vision.vision_router import vision_router
+from handlers.vision.vision_settings import vision_settings_router
 async def main():
     dp.include_routers(main_router,
                        gpt_router,
@@ -25,6 +27,8 @@ async def main():
                        errors_router,
                        audio_tt_settings,
                        speech_router,
+                       vision_router,
+                       vision_settings_router
                        )
     logger.info('Bot started.')
 

@@ -187,16 +187,14 @@ async def solo_request(text, message, degree, settings, model='gpt-3.5-turbo', f
                 tokens_used = result['usage']['total_tokens']
                 logger.info(f"Request successful: {tokens_used} tokens used.")
 
-                if history_message != '':
-                    history_file = f'history_messages/{user_id}.json'
-                    messages = await load_messages(history_file)
-                    new_message = {"text": f"{message.text}", "from": "user"}
-                    new = await add_message(messages, new_message)
-                    await save_messages(messages, history_file)
-                    new_message = {"text": f"{answer}", "from": f"{model}"}
-                    new = await add_message(messages, new_message)
-                    await save_messages(messages, history_file)
-
+                history_file = f'history_messages/{user_id}.json'
+                messages = await load_messages(history_file)
+                new_message = {"text": f"{message.text}", "from": "user"}
+                new = await add_message(messages, new_message)
+                await save_messages(messages, history_file)
+                new_message = {"text": f"{answer}", "from": f"{model}"}
+                new = await add_message(messages, new_message)
+                await save_messages(messages, history_file)
 
                 return round(time() - start_time, 2), answer, tokens_used
 

@@ -1,5 +1,8 @@
 from aiogram.fsm.state import State, StatesGroup
 
+class WaitingStateVision(StatesGroup):
+    wait_photo = State()
+
 
 class WaitingStateChatGpt(StatesGroup):
     wait_message_from_user = State()
